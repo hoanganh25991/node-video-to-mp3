@@ -1,9 +1,11 @@
 const ffmpeg = require("fluent-ffmpeg");
 const fs = require("fs")
+const https = require('https');
 const http = require('http');
 
 const curDir = __dirname;
 const audioMp3 = "mp3";
+const _ = console.log
 
 const testMp4 = `${curDir}/test.mp4`;
 const testMp3 = `${curDir}/test.mp3`;
@@ -36,24 +38,31 @@ const run2 = () => {
 }
 
 const convertNStream = (url, res) => {
-	http.get(url).on("response", (videoStream) => {
-			const ffStream = ffmpeg(videoStream).format(audioMp3).pipe();
+	https.get(url).on("response", (videoStream) => {
+		_(videoStream.constructor.name)
+		const ffStream = ffmpeg(videoStream).format(audioMp3).on("error", (err, stdout, stderr) => {
+                _('An error occurred: ' + err.message, err, stderr);
+            }).pipe();
+		const timestamp = new Date().getTime();
 
-			res.setHeader('Content-disposition', 'attachment; filename=' + "test.mp3");
-			res.setHeader('Content-type', 'application/octet-stream');
+		res.setHeader('Content-disposition', `attachment; filename=${timestamp}.mp3`);
+		res.setHeader('Content-type', 'application/octet-stream');
 
-			// outStream
-			ffStream.on("data", chunk => {
-				res.write(chunk);
-			})
-			.on("finish", () => res.end())
+		// outStream
+		ffStream.on("data", chunk => {
+			res.write(chunk);
 		})
+		.on("finish", () => res.end())
+		
+	})
 }
 
 const run = () => {
 	const server = http.createServer((req, res) => {
-		// const url = "https://r3---sn-ogueln7d.googlevideo.com/videoplayback?dur=794.656&key=yt6&lmt=1519393339878059&ipbits=0&initcwndbps=936250&clen=42173389&requiressl=yes&signature=8A0D53C76A1DABE2E1564FD97946076D5B164805.A4C1EDA3ACBEAFAAE31AD663D02161F706FEDCCF&source=youtube&ip=45.76.211.250&ms=au,rdu&ei=UlyeWtvYGJTW4wLFjrSwDA&mv=m&pl=26&mt=1520327680&itag=18&mn=sn-ogueln7d,sn-oguesnzz&mm=31,29&id=o-ALjgzeDJD9Vpcwjap4d-7q_IbU6bu7RJZ23usGwcTs63&fvip=3&c=WEB&mime=video/mp4&ratebypass=yes&sparams=clen,dur,ei,gir,id,initcwndbps,ip,ipbits,itag,lmt,mime,mm,mn,ms,mv,pl,ratebypass,requiressl,source,expire&gir=yes&expire=1520349362&signature=8A0D53C76A1DABE2E1564FD97946076D5B164805.A4C1EDA3ACBEAFAAE31AD663D02161F706FEDCCF";
-		const url = "http://tinker.press/videos/say-hello-to-cozmo.mp4";
+		const url = "https://r5---sn-oguelned.googlevideo.com/videoplayback?mime=video/mp4&itag=18&expire=1520350244&fvip=5&lmt=1418283934285556&ratebypass=yes&clen=64651238&source=youtube&key=yt6&ip=45.76.211.250&mn=sn-oguelned,sn-i3belnel&mm=31,26&ms=au,onr&ipbits=0&pl=26&gir=yes&mt=1520328536&c=WEB&signature=D5DD6AE0A7F4FF3F8DC5F6C08F8C4278EF01A8BE.394971E8DD802D76C13238D478BB4E54CCB6711A&sparams=clen,dur,ei,gir,id,initcwndbps,ip,ipbits,itag,lmt,mime,mm,mn,ms,mv,pl,ratebypass,requiressl,source,expire&requiressl=yes&ei=xF-eWs2fHIHg4wL1kJ6oCA&id=o-AOyMkYt8UxvuQdovSjJusnQ6LLjvQAsP60G4iVbr3WYj&initcwndbps=662500&dur=943.055&mv=m&signature=D5DD6AE0A7F4FF3F8DC5F6C08F8C4278EF01A8BE.394971E8DD802D76C13238D478BB4E54CCB6711A";
+		// const url = "https://tinker.press/videos/say-hello-to-cozmo.mp4";
+		// const url = "https://tinker.press/videos/abc.mp4";
+		// const url = "https://tinker.press/videos/def.mp4";
 		convertNStream(url, res)
 	}).listen(3000);
 }
