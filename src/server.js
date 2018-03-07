@@ -16,7 +16,7 @@ const getUrl = req => {
   const { query = {} } = URL.parse(req.url, true)
   const { url: hexUrl } = query
   const url = hexToString(hexUrl)
-  console.log("[hexUrl, url]", hexUrl, url)
+  // console.log("[hexUrl, url]", hexUrl, url)
 
   return url
 }
