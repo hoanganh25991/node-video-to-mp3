@@ -36,6 +36,6 @@ Call API as GET method with param: url
 Under `src` folder
 
     src
-    ├── convert.js          <-- Call ffmpeg api on video stream
+    ├── convert.js          <-- Call ffmpeg API to convert mp3 on video stream
     ├── getVideoStream.js   <-- Get video stream from url
     ├── server.js           <-- Node server response converted chunk to customer
