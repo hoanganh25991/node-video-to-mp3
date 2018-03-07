@@ -8,6 +8,7 @@ const audioMp3 = "mp3";
 const _ = console.log
 
 const testMp4 = `${curDir}/test.mp4`;
+const testM4a = `${curDir}/test.m4a`;
 const testMp3 = `${curDir}/test.mp3`;
 
 const timestamp = new Date().getTime()
@@ -15,7 +16,7 @@ const outStream = fs.createWriteStream(`${timestamp}.mp3`);
 
 const run1 = () => {
 	// Simple run on full video
-	ffmpeg(testMp4)
+	ffmpeg(testM4a)
 	.format(audioMp3)
 	.output(testMp3)
 	.run();
@@ -69,4 +70,4 @@ const run = () => {
 }
 
 
-run();
+run1();
