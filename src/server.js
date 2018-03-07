@@ -4,12 +4,6 @@ import { convertStreamToMp3 } from "./convert"
 import { msg } from "./message"
 import URL from "url"
 
-const setDownloadHeader = res => {
-  const timestamp = new Date().getTime()
-  res.setHeader("Content-disposition", `attachment; filename=${timestamp}.mp3`)
-  res.setHeader("Content-type", "application/octet-stream")
-}
-
 const hexToString = hex => {
   let string = ""
   for (let i = 0; i < hex.length; i += 2) {
@@ -27,7 +21,16 @@ const getUrl = req => {
   return url
 }
 
+const setDownloadHeader = res => {
+  const timestamp = new Date().getTime()
+  res.setHeader("Content-disposition", `attachment; filename=${timestamp}.mp3`)
+  res.setHeader("Content-type", "application/octet-stream")
+}
+
 const run = () => {
+  const { SERVER_PORT } = process.env
+  const port = SERVER_PORT || 3000
+
   http
     .createServer(async (req, res) => {
       const url = getUrl(req)
@@ -41,7 +44,7 @@ const run = () => {
       convertStream.on("data", chunk => res.write(chunk))
       convertStream.on("finish", () => res.end())
     })
-    .listen(3000)
+    .listen(port)
 }
 
 run()
