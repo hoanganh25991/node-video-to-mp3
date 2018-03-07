@@ -3,10 +3,14 @@ const fs = require("fs")
 const https = require("https");
 const http = require("http");
 const { URL } = require('url');
+const Oaxios = require("axios")
 
 const curDir = __dirname;
 const audioMp3 = "mp3";
 const _ = console.log
+const axios = Oaxios.create({
+  timeout: 600000
+})
 
 const testMp4 = `${curDir}/test.mp4`;
 const testM4a = `${curDir}/test.m4a`;
@@ -40,8 +44,7 @@ const run2 = () => {
 }
 
 const convertNStream = (url, res) => {
-	const pUrl = new URL(url);
-	
+	// const pUrl = new URL(url);
 	// const options = {
 	// 	host: pUrl.host,
 	// 	port: 443,
@@ -52,26 +55,49 @@ const convertNStream = (url, res) => {
 	// 	}
 	// };
 
-	https.get(url).on("response", (videoStream) => {
-		const {headers, statusCode} = videoStream
-		_("[headers, statusCode]", headers, statusCode)
-		// videoStream.on("data", chunk => _(chunk))
-		const ffStream = ffmpeg(videoStream).format(audioMp3).on("error", (err, stdout, stderr) => {
-                _("[ERR]", err.message, err, stderr);
-            }).pipe();
-		const timestamp = new Date().getTime();
+  axios({
+    url,
+    method:'GET',
+    responseType:'stream'
+  }).then(videoStream => {
+    const {headers, status} = videoStream
+    _("[headers, status]", headers, status)
+    const ffStream = ffmpeg(videoStream.data).format(audioMp3).on("error", (err, stdout, stderr) => {
+      _("[ERR]", err.message, err, stderr);
+    }).pipe();
+    const timestamp = new Date().getTime();
 
-		res.setHeader("Content-disposition", `attachment; filename=${timestamp}.mp3`);
-		res.setHeader("Content-type", "application/octet-stream");
+    res.setHeader("Content-disposition", `attachment; filename=${timestamp}.mp3`);
+    res.setHeader("Content-type", "application/octet-stream");
 
-		// outStream
-		ffStream.on("data", chunk => {
-			// _("Chunk size", chunk.length)
-			res.write(chunk);
-		})
-		.on("finish", () => res.end())
-		
-	})
+    // outStream
+    ffStream.on("data", chunk => {
+      // _("Chunk size", chunk.length)
+      res.write(chunk);
+    })
+      .on("finish", () => res.end())
+  })
+
+	// https.get(url).on("response", (videoStream) => {
+	// 	const {headers, statusCode} = videoStream
+	// 	_("[headers, statusCode]", headers, statusCode)
+	// 	// videoStream.on("data", chunk => _(chunk))
+	// 	const ffStream = ffmpeg(videoStream).format(audioMp3).on("error", (err, stdout, stderr) => {
+   //              _("[ERR]", err.message, err, stderr);
+   //          }).pipe();
+	// 	const timestamp = new Date().getTime();
+  //
+	// 	res.setHeader("Content-disposition", `attachment; filename=${timestamp}.mp3`);
+	// 	res.setHeader("Content-type", "application/octet-stream");
+  //
+	// 	// outStream
+	// 	ffStream.on("data", chunk => {
+	// 		// _("Chunk size", chunk.length)
+	// 		res.write(chunk);
+	// 	})
+	// 	.on("finish", () => res.end())
+	//
+	// })
 }
 
 const run = () => {
