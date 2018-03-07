@@ -8,12 +8,14 @@ import { decrypt } from "./sign"
 const getUrl = req => {
   const { query = {} } = URL.parse(req.url, true)
   const { token } = query
-  const data = decrypt(token)
-  if (!data) return null
+  const dataStr = decrypt(token)
 
-  const { url } = data
-  console.log("[url]", data)
-  return url
+  try {
+    const { url } = JSON.parse(dataStr)
+    return url
+  } catch (err) {
+    return null
+  }
 }
 
 const setDownloadHeader = res => {
@@ -29,7 +31,7 @@ const run = () => {
   http
     .createServer(async (req, res) => {
       const url = getUrl(req)
-      if (!url) return res.end(msg.GET_VIDEO_FAIL)
+      if (!url) return res.end(msg.GET_URL_FAIL)
 
       const videoStream = await getVideoStream(url)
       if (!videoStream) return res.end(msg.GET_VIDEO_FAIL)
