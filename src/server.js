@@ -3,22 +3,19 @@ import { getVideoStream } from "./getVideoStream"
 import { convertStreamToMp3 } from "./convert"
 import { msg } from "./message"
 import URL from "url"
-
-const hexToString = hex => {
-  let string = ""
-  for (let i = 0; i < hex.length; i += 2) {
-    string += String.fromCharCode(parseInt(hex.substr(i, 2), 16))
-  }
-  return string
-}
+import { decrypt } from "./sign"
 
 const getUrl = req => {
   const { query = {} } = URL.parse(req.url, true)
-  const { url: hexUrl } = query
-  const url = hexToString(hexUrl)
-  // console.log("[hexUrl, url]", hexUrl, url)
+  const { token } = query
+  const dataStr = decrypt(token)
 
-  return url
+  try {
+    const { url } = JSON.parse(dataStr)
+    return url
+  } catch (err) {
+    return null
+  }
 }
 
 const setDownloadHeader = res => {
@@ -34,7 +31,7 @@ const run = () => {
   http
     .createServer(async (req, res) => {
       const url = getUrl(req)
-      if (!url) return res.end(msg.GET_VIDEO_FAIL)
+      if (!url) return res.end(msg.GET_URL_FAIL)
 
       const videoStream = await getVideoStream(url)
       if (!videoStream) return res.end(msg.GET_VIDEO_FAIL)

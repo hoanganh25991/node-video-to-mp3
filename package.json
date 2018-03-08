@@ -12,7 +12,9 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "fluent-ffmpeg": "^2.1.2"
+    "dotenv": "^5.0.1",
+    "fluent-ffmpeg": "^2.1.2",
+    "jsonwebtoken": "^8.2.0"
   },
   "scripts": {
     "precommit": "lint-staged",
