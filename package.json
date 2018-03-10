@@ -19,7 +19,8 @@
   "scripts": {
     "precommit": "lint-staged",
     "dev": "nodemon src/server.js --exec babel-node",
-    "start": "babel-node scripts/deploy.js && node dist/server.js"
+    "build": "babel-node scripts/deploy.js",
+    "start": "yarn build && node dist/server.js"
   },
   "lint-staged": {
     "*.js": [
