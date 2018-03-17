@@ -30,7 +30,7 @@ https://codebeautify.org/string-hex-converter
 
 Call API as GET method with param: url
 
-    HOST_SERVER/?url=[hex-string]
+    HOST_SERVER/?token=[hex-string]
     
 # Code structure
 Under `src` folder
@@ -39,3 +39,9 @@ Under `src` folder
     ├── convert.js          <-- Call ffmpeg API to convert mp3 on video stream
     ├── getVideoStream.js   <-- Get video stream from url
     ├── server.js           <-- Node server response converted chunk to customer
+    
+
+# Competitors
+http://convert2mp3.net/en/index.php
+
+Try on http://convert2mp3.net/en/index.php?p=complete&id=youtube_kJQP7kiw5Fk&key=CJk3DNOCbNtK
