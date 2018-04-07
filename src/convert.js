@@ -14,6 +14,7 @@ export const convertStreamToMp3 = videoStream => {
     .pipe()
 }
 
+//https://trac.ffmpeg.org/wiki/Seeking
 //ffmpeg -ss 50 -i D:\work-station\node-video-to-mp3\src/__test__/24-hours.mp4 -t 60 -f mp3 -ab 320k abc.mp3
 export const convertStreamMp3FromTo = videoStream => {
   return ffmpeg(videoStream)

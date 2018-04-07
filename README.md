@@ -41,6 +41,9 @@ Under `src` folder
     ├── server.js           <-- Node server response converted chunk to customer
     
 
+# ffmpeg
+https://trac.ffmpeg.org/wiki/Seeking
+
 # Competitors
 http://convert2mp3.net/en/index.php
 
